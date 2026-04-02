@@ -174,7 +174,7 @@ body::before {
   display: inline-block;
   width: 2px;
   height: 1.1em;
-  background: oklch(0.82 0.12 75);
+  background: oklch(0.50 0.10 75);
   margin-left: 2px;
   vertical-align: text-bottom;
   animation: blink 1s step-end infinite;
@@ -196,40 +196,241 @@ body::before {
   border-color: oklch(0.82 0.12 75 / 50%);
 }
 
-/* ---- Prose overrides for dark theme ---- */
-.prose-observatory {
-  --tw-prose-body: oklch(0.78 0.015 260);
-  --tw-prose-headings: oklch(0.92 0.01 80);
-  --tw-prose-links: oklch(0.82 0.12 75);
-  --tw-prose-bold: oklch(0.90 0.02 80);
-  --tw-prose-code: oklch(0.82 0.12 75);
-  --tw-prose-quotes: oklch(0.65 0.04 260);
-  --tw-prose-quote-borders: oklch(0.82 0.12 75 / 30%);
-  --tw-prose-counters: oklch(0.55 0.06 75);
-  --tw-prose-bullets: oklch(0.55 0.06 75);
-  --tw-prose-hr: oklch(0.25 0.02 260);
-  --tw-prose-th-borders: oklch(0.30 0.02 260);
-  --tw-prose-td-borders: oklch(0.22 0.015 260);
+/* ---- Light report panel ---- */
+.report-light {
+  background: oklch(0.99 0.002 260);
+  color: oklch(0.20 0.015 260);
+}
+.report-light .report-header {
+  background: oklch(0.97 0.003 260 / 90%);
+  border-color: oklch(0.90 0.01 260);
+  color: oklch(0.40 0.02 260);
+}
+.report-light .report-header h3 {
+  color: oklch(0.40 0.02 260);
+}
+.report-light .streaming-indicator {
+  color: oklch(0.50 0.10 75);
+}
+.report-light .streaming-indicator span {
+  background: oklch(0.60 0.12 75);
+}
+.report-light .sources-header {
+  color: oklch(0.40 0.02 260);
+}
+.report-light .sources-divider {
+  background: oklch(0.90 0.01 260);
 }
 
+/* ---- Prose styles (light report) ---- */
+.prose-observatory {
+  --tw-prose-body: oklch(0.30 0.015 260);
+  --tw-prose-headings: oklch(0.15 0.02 260);
+  --tw-prose-links: oklch(0.45 0.12 75);
+  --tw-prose-bold: oklch(0.20 0.015 260);
+  --tw-prose-code: oklch(0.45 0.10 75);
+  --tw-prose-quotes: oklch(0.40 0.02 260);
+  --tw-prose-quote-borders: oklch(0.60 0.10 75 / 40%);
+  --tw-prose-counters: oklch(0.50 0.08 75);
+  --tw-prose-bullets: oklch(0.50 0.08 75);
+  --tw-prose-hr: oklch(0.88 0.01 260);
+  --tw-prose-th-borders: oklch(0.85 0.01 260);
+  --tw-prose-td-borders: oklch(0.90 0.01 260);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+
+/* Headings — all use body font (Plus Jakarta Sans) with size/weight differentiation */
+.prose-observatory :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2.5em;
+  margin-bottom: 0.8em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid oklch(0.88 0.01 260);
+  letter-spacing: -0.01em;
+}
+.prose-observatory :where(h1:first-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+}
+
+.prose-observatory :where(h2):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.005em;
+}
+
+.prose-observatory :where(h3):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose-observatory :where(h4):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: oklch(0.50 0.08 75);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Paragraphs */
+.prose-observatory :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-bottom: 1.25em;
+}
+
+/* Lists */
+.prose-observatory :where(ul):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-left: 1.5em;
+  margin-bottom: 1.25em;
+}
+.prose-observatory :where(ol):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-left: 1.5em;
+  margin-bottom: 1.25em;
+}
+.prose-observatory :where(li):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-bottom: 0.4em;
+  line-height: 1.7;
+}
+.prose-observatory :where(ul > li)::marker {
+  color: oklch(0.50 0.08 75);
+}
+.prose-observatory :where(ol > li)::marker {
+  color: oklch(0.50 0.08 75);
+  font-weight: 500;
+}
+
+/* Blockquotes */
+.prose-observatory :where(blockquote):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-left: 3px solid oklch(0.60 0.10 75 / 50%);
+  background: oklch(0.96 0.005 260);
+  border-radius: 0 8px 8px 0;
+  padding: 0.875em 1.25em;
+  font-style: italic;
+  color: oklch(0.40 0.02 260);
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+/* Tables */
+.prose-observatory :where(table):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+.prose-observatory :where(thead):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-bottom: 2px solid oklch(0.60 0.10 75 / 25%);
+}
+.prose-observatory :where(th):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 600;
+  text-align: left;
+  padding: 0.625em 1em;
+  color: oklch(0.20 0.015 260);
+  background: oklch(0.96 0.005 260);
+}
+.prose-observatory :where(td):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding: 0.625em 1em;
+  border-bottom: 1px solid oklch(0.92 0.005 260);
+}
+.prose-observatory :where(tr:nth-child(even)):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  background: oklch(0.97 0.003 260);
+}
+
+/* Horizontal rules */
+.prose-observatory :where(hr):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, oklch(0.85 0.01 260), transparent);
+  margin: 2.5em 0;
+}
+
+/* Links */
 .prose-observatory :where(a):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
   text-decoration: underline;
-  text-decoration-color: oklch(0.82 0.12 75 / 30%);
+  text-decoration-color: oklch(0.50 0.10 75 / 40%);
   text-underline-offset: 3px;
   transition: text-decoration-color 0.2s;
 }
 .prose-observatory :where(a):not(:where([class~="not-prose"],[class~="not-prose"] *)):hover {
-  text-decoration-color: oklch(0.82 0.12 75);
+  text-decoration-color: oklch(0.50 0.10 75);
 }
 
+/* Inline code */
 .prose-observatory :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
-  background: oklch(0.20 0.02 260);
+  background: oklch(0.95 0.005 260);
   padding: 0.15em 0.4em;
   border-radius: 4px;
-  font-size: 0.875em;
+  font-size: 0.85em;
 }
 
-/* ---- Source card hover ---- */
+/* Code blocks */
+.prose-observatory :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  background: oklch(0.97 0.003 260);
+  border: 1px solid oklch(0.92 0.005 260);
+  border-radius: 8px;
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  font-size: 0.85em;
+  line-height: 1.6;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+.prose-observatory :where(pre code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: oklch(0.30 0.015 260);
+}
+
+/* Strong/emphasis */
+.prose-observatory :where(strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 600;
+  color: oklch(0.18 0.015 260);
+}
+
+/* ---- Source card in light report ---- */
+.report-light .source-card {
+  background: oklch(0.98 0.003 260);
+  border-color: oklch(0.92 0.005 260);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.report-light .source-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px oklch(0 0 0 / 8%);
+  border-color: oklch(0.50 0.10 75 / 40%);
+}
+.report-light .source-card .source-title {
+  color: oklch(0.20 0.015 260);
+}
+.report-light .source-card:hover .source-title {
+  color: oklch(0.45 0.12 75);
+}
+.report-light .source-card .source-index {
+  background: oklch(0.95 0.005 260);
+  color: oklch(0.45 0.03 260);
+}
+.report-light .source-card .source-domain {
+  color: oklch(0.50 0.02 260);
+}
+.report-light .source-card .source-arrow {
+  color: oklch(0.75 0.01 260);
+}
+.report-light .source-card:hover .source-arrow {
+  color: oklch(0.50 0.10 75 / 60%);
+}
+
+/* ---- Source card hover (dark, for non-report areas) ---- */
 .source-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }

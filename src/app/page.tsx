@@ -22,7 +22,7 @@ export default function Home() {
       </header>
 
       {/* Research area */}
-      <div className="flex-1 mx-auto w-full max-w-3xl px-4 py-10 space-y-8">
+      <div className="flex-1">
         <ResearchClient />
       </div>
     </main>

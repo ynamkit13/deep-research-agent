@@ -38,7 +38,7 @@ export function ResearchProgress({ steps, isActive }: ResearchProgressProps) {
       {/* Header */}
       <div className="px-5 pt-5 pb-4 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-heading text-lg text-foreground">Research Progress</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Research Progress</h3>
           {isActive && (
             <span className="text-xs font-medium text-amber-dim tabular-nums">
               {isFinalizing ? "Writing report\u2026" : `Iteration ${iteration} / ${MAX_ITERATIONS}`}

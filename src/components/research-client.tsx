@@ -129,9 +129,10 @@ export function ResearchClient() {
   }, []);
 
   const isActive = state.status === "researching" || state.status === "streaming";
+  const hasReport = state.report.length > 0;
 
-  return (
-    <div className="space-y-6">
+  const leftPanel = (
+    <>
       <ResearchForm onSubmit={startResearch} onCancel={cancelResearch} disabled={isActive} />
 
       {state.error && (
@@ -142,12 +143,35 @@ export function ResearchClient() {
       )}
 
       <ResearchProgress steps={state.steps} isActive={state.status === "researching"} />
+    </>
+  );
 
-      <ResearchReport
-        report={state.report}
-        sources={state.sources}
-        isStreaming={state.status === "streaming"}
-      />
+  /* ---- Single-column: no report yet ---- */
+  if (!hasReport) {
+    return (
+      <div className="mx-auto w-full max-w-3xl px-4 py-10 space-y-6">
+        {leftPanel}
+      </div>
+    );
+  }
+
+  /* ---- Split-screen: report exists ---- */
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(380px,1fr)_minmax(0,2fr)] h-[calc(100vh-200px)]">
+      {/* Left panel — form + progress */}
+      <div className="overflow-y-auto border-b lg:border-b-0 lg:border-r border-border/50 p-6 space-y-6">
+        {leftPanel}
+      </div>
+
+      {/* Right panel — report */}
+      <div className="overflow-y-auto">
+        <ResearchReport
+          report={state.report}
+          sources={state.sources}
+          isStreaming={state.status === "streaming"}
+          embedded
+        />
+      </div>
     </div>
   );
 }
