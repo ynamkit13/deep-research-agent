@@ -1,16 +1,24 @@
 import { SSEEvent, Source } from "@/types/research";
-import { searchWeb } from "./exa";
+import { searchWeb, scoreSourceDomain } from "./exa";
 import { chatCompletionJSON, chatCompletionStream } from "./openrouter";
 import {
   PLAN_PROMPT,
   ANALYZE_PROMPT,
   REPORT_PROMPT,
+  PREMISE_CHECK_PROMPT,
   buildPlanUserPrompt,
   buildAnalyzeUserPrompt,
   buildReportUserPrompt,
+  buildPremiseCheckUserPrompt,
 } from "./prompts";
 
 const MAX_ITERATIONS = 5;
+
+interface PremiseCheckResponse {
+  has_unverified_premise: boolean;
+  premise_issues: string[];
+  rewritten_query: string;
+}
 
 interface PlanResponse {
   reasoning: string;
@@ -34,11 +42,15 @@ function deduplicateSources(sources: Source[]): Source[] {
   });
 }
 
+function rankSources(sources: Source[]): Source[] {
+  return [...sources].sort((a, b) => scoreSourceDomain(b.url) - scoreSourceDomain(a.url));
+}
+
 function buildSourceSummaries(sources: Source[]): string {
   return sources
     .map(
       (s, i) =>
-        `[${i + 1}] "${s.title}" (${s.url})\n${s.snippet.slice(0, 500)}`
+        `[${i + 1}] "${s.title}" (${s.url})${s.publishedDate ? ` [Published: ${s.publishedDate}]` : ""}\n${s.snippet.slice(0, 500)}`
     )
     .join("\n\n");
 }
@@ -50,6 +62,39 @@ export async function runResearchLoop(
   let accumulatedSources: Source[] = [];
   let keyFindings: string[] = [];
   let iteration = 0;
+  let premiseWarnings: string[] = [];
+
+  // Step 0: Validate the question's premise before researching
+  sendEvent({
+    type: "step",
+    step: { type: "planning", message: "Checking query premises..." },
+  });
+
+  let premiseCheck: PremiseCheckResponse;
+  try {
+    premiseCheck = await chatCompletionJSON<PremiseCheckResponse>(
+      PREMISE_CHECK_PROMPT,
+      buildPremiseCheckUserPrompt(query)
+    );
+  } catch {
+    premiseCheck = { has_unverified_premise: false, premise_issues: [], rewritten_query: query };
+  }
+
+  // Use the rewritten query if the premise was flagged, and track warnings for the report
+  const effectiveQuery = premiseCheck.has_unverified_premise
+    ? premiseCheck.rewritten_query
+    : query;
+  premiseWarnings = premiseCheck.premise_issues;
+
+  if (premiseWarnings.length > 0) {
+    sendEvent({
+      type: "step",
+      step: {
+        type: "planning",
+        message: `Premise check: ${premiseWarnings.join("; ")}. Adjusting research approach.`,
+      },
+    });
+  }
 
   // Step 1: Plan initial searches
   sendEvent({
@@ -61,7 +106,7 @@ export async function runResearchLoop(
   try {
     plan = await chatCompletionJSON<PlanResponse>(
       PLAN_PROMPT,
-      buildPlanUserPrompt(query)
+      buildPlanUserPrompt(effectiveQuery)
     );
   } catch (err) {
     throw new Error(`Failed to plan research: ${err}`);
@@ -106,7 +151,8 @@ export async function runResearchLoop(
     accumulatedSources.push(...searchResults.flat());
     accumulatedSources = deduplicateSources(accumulatedSources);
 
-    // Cap sources at 20 to manage context
+    // Rank by domain authority, then cap at 20 — speculative blogs get cut first
+    accumulatedSources = rankSources(accumulatedSources);
     if (accumulatedSources.length > 20) {
       accumulatedSources = accumulatedSources.slice(0, 20);
     }
@@ -148,7 +194,7 @@ export async function runResearchLoop(
   const sourceSummaries = buildSourceSummaries(accumulatedSources);
   const reportStream = await chatCompletionStream(
     REPORT_PROMPT,
-    buildReportUserPrompt(query, sourceSummaries, keyFindings)
+    buildReportUserPrompt(query, sourceSummaries, keyFindings, premiseWarnings)
   );
 
   // Parse OpenRouter SSE stream and forward report chunks
